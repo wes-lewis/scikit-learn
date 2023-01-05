@@ -644,7 +644,7 @@ class GaussianMixture(BaseMixture):
         else:
             self.precisions_cholesky_ = np.sqrt(self.precisions_init)
 
-    def _m_step(self, X, log_resp):
+    def _m_step(self, X, log_resp, weight=1):
         """M step.
         Parameters
         ----------
