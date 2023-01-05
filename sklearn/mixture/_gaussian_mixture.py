@@ -1,7 +1,8 @@
-"""Gaussian Mixture Model."""
+"""Weighted Gaussian Mixture Model."""
 
 # Author: Wei Xue <xuewei4d@gmail.com>
 # Modified by Thierry Guillemot <thierry.guillemot.work@gmail.com>
+# Modified by Wes Lewis <wes.lewis@yale.edu>
 # License: BSD 3 clause
 
 import numpy as np
@@ -468,16 +469,16 @@ def _estimate_log_gaussian_prob(X, means, precisions_chol, covariance_type, weig
     return -0.5 * (n_features * np.log(2 * np.pi) + log_prob) + log_det
 
 
-class GaussianMixture(BaseMixture):
-    """Gaussian Mixture.
+class WeightedGaussianMixture(BaseMixture):
+    """Weighted Gaussian Mixture.
 
-    Representation of a Gaussian mixture model probability distribution.
+    Representation of a Gaussian mixture model probability distribution, where samples may be given individual "weights".
     This class allows to estimate the parameters of a Gaussian mixture
     distribution.
 
     Read more in the :ref:`User Guide <gmm>`.
 
-    .. versionadded:: 0.18
+    .. versionadded:: <dev>
 
     Parameters
     ----------
@@ -643,7 +644,7 @@ class GaussianMixture(BaseMixture):
     >>> import numpy as np
     >>> from sklearn.mixture import GaussianMixture
     >>> X = np.array([[1, 2], [1, 4], [1, 0], [10, 2], [10, 4], [10, 0]])
-    >>> gm = GaussianMixture(n_components=2, random_state=0).fit(X)
+    >>> gm = WeightedGaussianMixture(n_components=2, random_state=0).fit(X)
     >>> gm.means_
     array([[10.,  2.],
            [ 1.,  2.]])
