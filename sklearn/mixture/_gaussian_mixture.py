@@ -661,7 +661,7 @@ class GaussianMixture(BaseMixture):
             self.covariances_, self.covariance_type
         )
 
-    def _estimate_log_prob(self, X):
+    def _estimate_log_prob(self, X, weight=1):
         return _estimate_log_gaussian_prob(
             X, self.means_, self.precisions_cholesky_, self.covariance_type
         )
