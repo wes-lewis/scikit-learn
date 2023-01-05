@@ -316,7 +316,7 @@ class BaseMixture(DensityMixin, BaseEstimator, metaclass=ABCMeta):
         return np.mean(log_prob_norm), log_resp
 
     @abstractmethod
-    def _m_step(self, X, log_resp):
+    def _m_step(self, X, log_resp, weight=1):
         """M step.
 
         Parameters
