@@ -391,9 +391,6 @@ class BaseMixture(DensityMixin, BaseEstimator, metaclass=ABCMeta):
 
     def predict_proba(self, X, weight=1):
         
-        import inspect
-        print(inspect.stack())
-        print("that was stack. predict_proba was just called")
         """Evaluate the components' density for each sample.
 
         Parameters
