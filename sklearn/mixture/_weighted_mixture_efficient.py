@@ -432,8 +432,7 @@ def _estimate_log_gaussian_prob(X, means, precisions_chol, covariance_type, weig
         for k, (mu, prec_chol) in enumerate(zip(means, precisions_chol)):
             y = np.empty((n_samples,n_features))
             #print("weight = " , weight)
-            for i in range(X.shape[0]):
-                y[i,:] = np.dot(X[i,:], np.sqrt(weight[i])*prec_chol) - np.dot(mu, np.sqrt(weight[i])*prec_chol)
+            y = (np.dot(X, prec_chol) - np.dot(mu, prec_chol)) * np.sqrt(weight).reshape(-1, 1)
             #print("y shape = ", y.shape)
             log_prob[:, k] = np.sum(np.square(y), axis=1)
 
@@ -463,7 +462,7 @@ def _estimate_log_gaussian_prob(X, means, precisions_chol, covariance_type, weig
     return -0.5 * (n_features * np.log(2 * np.pi) + log_prob) + log_det
 
 
-class WeightedGaussianMixture(BaseMixture):
+class WeightedGaussianMixtureEfficient(BaseMixture):
     """Weighted Gaussian Mixture.
 
     Representation of a Gaussian mixture model probability distribution, where samples may be given individual "weights".
