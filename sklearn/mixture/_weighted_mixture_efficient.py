@@ -261,7 +261,6 @@ def _estimate_gaussian_covariances_spherical(resp, X, nk, means, reg_covar):
 
 
 def _estimate_gaussian_parameters(X, resp, reg_covar, covariance_type, weight=1):
-    weight = np.multiply(np.repeat(1, X.shape[0]),weight)
     """Estimate the Gaussian distribution parameters.
 
     Parameters
@@ -397,7 +396,6 @@ def _compute_log_det_cholesky(matrix_chol, covariance_type, n_features):
 
 
 def _estimate_log_gaussian_prob(X, means, precisions_chol, covariance_type, weight=1):
-    weight = np.multiply(np.repeat(1, X.shape[0]),weight)
     """Estimate the log Gaussian probability.
 
     Parameters
@@ -748,7 +746,6 @@ class WeightedGaussianMixtureEfficient(BaseMixture):
             self.precisions_cholesky_ = np.sqrt(self.precisions_init)
 
     def _m_step(self, X, log_resp, weight=1):
-        weight = np.multiply(np.repeat(1, X.shape[0]),weight)
         """M step.
 
         Parameters
@@ -768,7 +765,6 @@ class WeightedGaussianMixtureEfficient(BaseMixture):
         )
 
     def _estimate_log_prob(self, X, weight=1):
-        weight = np.multiply(np.repeat(1, X.shape[0]),weight)
         #import inspect
         #print(inspect.stack())
         #print("weight passed to GM _estimate_log_prob: "+str(weight))
