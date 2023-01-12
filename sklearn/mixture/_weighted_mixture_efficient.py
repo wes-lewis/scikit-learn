@@ -8,6 +8,7 @@
 import numpy as np
 
 from scipy import linalg
+from numba import jit
 
 from ._base import BaseMixture, _check_shape
 from ..utils import check_array
@@ -259,8 +260,9 @@ def _estimate_gaussian_covariances_spherical(resp, X, nk, means, reg_covar):
     """
     return _estimate_gaussian_covariances_diag(resp, X, nk, means, reg_covar).mean(1)
 
-
+@jit(nopython=True)
 def _estimate_gaussian_parameters(X, resp, reg_covar, covariance_type, weight=1):
+
     """Estimate the Gaussian distribution parameters.
 
     Parameters
@@ -394,7 +396,7 @@ def _compute_log_det_cholesky(matrix_chol, covariance_type, n_features):
 
     return log_det_chol
 
-
+@jit(nopython=True)
 def _estimate_log_gaussian_prob(X, means, precisions_chol, covariance_type, weight=1):
     """Estimate the log Gaussian probability.
 
