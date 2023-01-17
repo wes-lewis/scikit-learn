@@ -8,6 +8,7 @@
 import numpy as np
 
 from scipy import linalg
+from numba import jit
 
 from ._base import BaseMixture, _check_shape
 from ..utils import check_array
@@ -154,6 +155,7 @@ def _check_precisions(precisions, covariance_type, n_components, n_features):
 
 
 def _estimate_gaussian_covariances_full(resp, X, nk, means, reg_covar, weight=1):
+    weight *= np.ones((X.shape[0]))
     """Estimate the full covariance matrices.
 
     Parameters
@@ -175,7 +177,7 @@ def _estimate_gaussian_covariances_full(resp, X, nk, means, reg_covar, weight=1)
     """
     n_components, n_features = means.shape
     covariances = np.empty((n_components, n_features, n_features))
-    wresp = np.multiply(resp.transpose(),weight).transpose()
+    wresp = weight[:, np.newaxis] * resp #np.multiply(resp.transpose(),weight).transpose()
     for k in range(n_components):
         diff = X - means[k]
         covariances[k] = np.dot(wresp[:, k] * diff.T, diff) / nk[k]
@@ -261,7 +263,7 @@ def _estimate_gaussian_covariances_spherical(resp, X, nk, means, reg_covar):
 
 
 def _estimate_gaussian_parameters(X, resp, reg_covar, covariance_type, weight=1):
-
+    weight *= np.ones((X.shape[0]))
     """Estimate the Gaussian distribution parameters.
 
     Parameters
@@ -290,7 +292,7 @@ def _estimate_gaussian_parameters(X, resp, reg_covar, covariance_type, weight=1)
         The covariance matrix of the current components.
         The shape depends of the covariance_type.
     """
-    wresp = np.multiply(resp.transpose(),weight).transpose()
+    wresp = weight[:, np.newaxis] * resp
     nk = wresp.sum(axis=0) + 10 * np.finfo(wresp.dtype).eps
     means = np.dot(wresp.T, X) / nk[:, np.newaxis]
     covariances = {
@@ -397,7 +399,6 @@ def _compute_log_det_cholesky(matrix_chol, covariance_type, n_features):
 
 
 def _estimate_log_gaussian_prob(X, means, precisions_chol, covariance_type, weight=1):
-
     """Estimate the log Gaussian probability.
 
     Parameters
@@ -432,8 +433,7 @@ def _estimate_log_gaussian_prob(X, means, precisions_chol, covariance_type, weig
         for k, (mu, prec_chol) in enumerate(zip(means, precisions_chol)):
             y = np.empty((n_samples,n_features))
             #print("weight = " , weight)
-            for i in range(X.shape[0]):
-                y[i,:] = np.dot(X[i,:], np.sqrt(weight[i])*prec_chol) - np.dot(mu, np.sqrt(weight[i])*prec_chol)
+            y = (np.dot(X, prec_chol) - np.dot(mu, prec_chol)) * np.sqrt(weight).reshape(-1, 1)
             #print("y shape = ", y.shape)
             log_prob[:, k] = np.sum(np.square(y), axis=1)
 
@@ -463,7 +463,7 @@ def _estimate_log_gaussian_prob(X, means, precisions_chol, covariance_type, weig
     return -0.5 * (n_features * np.log(2 * np.pi) + log_prob) + log_det
 
 
-class WeightedGaussianMixture(BaseMixture):
+class WeightedGaussianMixtureChanged(BaseMixture):
     """Weighted Gaussian Mixture.
 
     Representation of a Gaussian mixture model probability distribution, where samples may be given individual "weights".
