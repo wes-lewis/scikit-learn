@@ -5,7 +5,7 @@
 # License: BSD 3 clause
 
 import numpy as np
-
+from numba import jit
 from scipy import linalg
 
 from ._base import BaseMixture, _check_shape

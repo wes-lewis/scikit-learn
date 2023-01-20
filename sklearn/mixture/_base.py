@@ -10,6 +10,7 @@ from time import time
 from numbers import Integral, Real
 
 import numpy as np
+from numba import jit
 from scipy.special import logsumexp
 
 from .. import cluster
@@ -186,6 +187,7 @@ class BaseMixture(DensityMixin, BaseEstimator, metaclass=ABCMeta):
         self.fit_predict(X, y, weight = weight)
         return self
 
+    @jit
     def fit_predict(self, X, y=None, weight=1):
         #print("weight = " + str(weight))
         """Estimate model parameters using X and predict the labels for X.
