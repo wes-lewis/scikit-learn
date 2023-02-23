@@ -8,7 +8,6 @@
 import numpy as np
 
 from scipy import linalg
-from numba import jit
 
 from ._base import BaseMixture, _check_shape
 from ..utils import check_array
