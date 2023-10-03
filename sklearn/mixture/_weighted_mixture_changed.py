@@ -6,7 +6,7 @@
 # License: BSD 3 clause
 
 import numpy as np
-
+import pandas as pd
 from scipy import linalg
 
 from ._base import BaseMixture, _check_shape
@@ -333,6 +333,7 @@ def _compute_precision_cholesky(covariances, covariance_type):
         precisions_chol = np.empty((n_components, n_features, n_features))
         for k, covariance in enumerate(covariances):
             try:
+                #print("covariance",covariance)
                 cov_chol = linalg.cholesky(covariance, lower=True)
             except linalg.LinAlgError:
                 raise ValueError(estimate_precision_error_message)
@@ -426,12 +427,16 @@ def _estimate_log_gaussian_prob(X, means, precisions_chol, covariance_type, weig
     # matrix.
     # In short: det(precision_chol) = - det(precision) / 2
     log_det = _compute_log_det_cholesky(precisions_chol, covariance_type, n_features)
-
+    import math
     if covariance_type == "full":
         log_prob = np.empty((n_samples, n_components))
         for k, (mu, prec_chol) in enumerate(zip(means, precisions_chol)):
             y = np.empty((n_samples,n_features))
             #print("weight = " , weight)
+            #print("weight",weight)
+            #print("infs", pd.unique([math.isinf(i) for i in weight]))
+            #print("pd_nans", pd.unique([pd.isna(i) for i in weight]))
+            #print("np_nans", pd.unique([np.isnan(i) for i in weight]))
             y = (np.dot(X, prec_chol) - np.dot(mu, prec_chol)) * np.sqrt(weight).reshape(-1, 1)
             #print("y shape = ", y.shape)
             log_prob[:, k] = np.sum(np.square(y), axis=1)
